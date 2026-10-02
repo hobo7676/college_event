@@ -1,171 +1,126 @@
-const eventForm = document.getElementById("event-form");
-const adminEvents = document.getElementById("admin-events");
-const registrationTable = document.getElementById("registration-table");
-const adminSearch = document.getElementById("admin-event-search");
-const registrationSearch = document.getElementById("registration-search");
+const defaultEvents = [
+    {
+        id: 1,
+        name: "CodeChef CP Challenge",
+        date: "2026-10-10",
+        time: "11:00",
+        venue: "Lab 3",
+        category: "Competitive Programming",
+        description: "A competitive programming contest for students."
+    },
+    {
+        id: 2,
+        name: "Web Development Workshop",
+        date: "2026-10-15",
+        time: "12:00",
+        venue: "Lab 2",
+        category: "Web Development",
+        description: "Learn the basics of building websites."
+    },
+    {
+        id: 3,
+        name: "CodeChef Hackathon",
+        date: "2026-10-20",
+        time: "10:00",
+        venue: "Auditorium",
+        category: "Hackathon",
+        description: "Build a project and solve a real-world problem."
+    }
+];
 
-function renderAdminEvents() {
-    const q = adminSearch.value.toLowerCase().trim();
+function getEvents() {
+    const saved = localStorage.getItem("clubEvents");
 
-    const events = getEvents().filter(e =>
-        e.name.toLowerCase().includes(q)
+    if (saved) {
+        return JSON.parse(saved);
+    }
+
+    localStorage.setItem(
+        "clubEvents",
+        JSON.stringify(defaultEvents)
     );
 
-    adminEvents.innerHTML = events.length
-        ? events.map(e => `
-            <div class="admin-item">
-                <div>
-                    <strong>${e.name}</strong>
-                    <p>${e.category} • ${formatDate(e.date, e.time)}</p>
-                </div>
-
-                <div class="item-actions">
-                    <button onclick="editEvent(${e.id})">Edit</button>
-                    <button onclick="deleteEvent(${e.id})">Delete</button>
-                </div>
-            </div>
-        `).join("")
-        : '<p class="empty">No events found.</p>';
-
-    document.getElementById("event-count").textContent =
-        getEvents().length;
+    return defaultEvents;
 }
 
-function renderRegistrations() {
-    const q = registrationSearch.value.toLowerCase().trim();
-
-    const rows = getRegistrations().filter(r =>
-        `${r.name} ${r.email} ${r.collegeYear} ${r.eventName}`
-            .toLowerCase()
-            .includes(q)
+function saveEvents(events) {
+    localStorage.setItem(
+        "clubEvents",
+        JSON.stringify(events)
     );
-
-    registrationTable.innerHTML = rows.length
-        ? rows.map(r => `
-            <tr>
-                <td>${r.name}</td>
-                <td>${r.email}</td>
-                <td>${r.collegeYear}</td>
-                <td>${r.phone}</td>
-                <td>${r.eventName}</td>
-            </tr>
-        `).join("")
-        : '<tr><td colspan="5">No registrations found.</td></tr>';
-
-    document.getElementById("registration-count").textContent =
-        getRegistrations().length;
 }
 
-eventForm.addEventListener("submit", e => {
-    e.preventDefault();
+function getRegistrations() {
+    const saved = localStorage.getItem("clubRegistrations");
 
-    const id = Number(
-        document.getElementById("edit-id").value
-    );
+    return saved ? JSON.parse(saved) : [];
+}
 
-    const data = {
-        id: id || Date.now(),
-        name: document.getElementById("event-name").value.trim(),
-        date: document.getElementById("event-date").value,
-        time: document.getElementById("event-time").value,
-        venue: document.getElementById("event-venue").value.trim(),
-        category: document.getElementById("event-category").value,
-        description: document
-            .getElementById("event-description")
-            .value.trim()
-    };
+function formatDate(date, time) {
+    const d = new Date(`${date}T${time}`);
 
-    let events = getEvents();
-
-    events = id
-        ? events.map(e => e.id === id ? data : e)
-        : [...events, data];
-
-    saveEvents(events);
-    resetForm();
-    renderAdminEvents();
-});
-
-function editEvent(id) {
-    const e = getEvents().find(x => x.id === id);
-
-    if (!e) return;
-
-    document.getElementById("edit-id").value = e.id;
-    document.getElementById("event-name").value = e.name;
-    document.getElementById("event-date").value = e.date;
-    document.getElementById("event-time").value = e.time;
-    document.getElementById("event-venue").value = e.venue;
-    document.getElementById("event-category").value = e.category;
-    document.getElementById("event-description").value =
-        e.description;
-
-    document.getElementById("form-title").textContent =
-        "Edit Event";
-
-    document.getElementById("save-event").textContent =
-        "Update Event";
-
-    document.getElementById("cancel-edit").hidden = false;
-
-    scrollTo({
-        top: 0,
-        behavior: "smooth"
+    return d.toLocaleString([], {
+        dateStyle: "medium",
+        timeStyle: "short"
     });
 }
 
-function deleteEvent(id) {
-    if (!confirm("Delete this event?")) return;
+function eventCard(event) {
+    return `
+        <article class="event-card">
+            <span class="tag">${event.category}</span>
 
-    saveEvents(
-        getEvents().filter(e => e.id !== id)
-    );
+            <h3>${event.name}</h3>
 
-    renderAdminEvents();
+            <p class="event-meta">
+                ${formatDate(event.date, event.time)}
+                • ${event.venue}
+            </p>
+
+            <p>${event.description}</p>
+
+            <a
+                class="btn primary"
+                href="register.html?id=${event.id}">
+                Register
+            </a>
+        </article>
+    `;
 }
 
-function resetForm() {
-    eventForm.reset();
 
-    document.getElementById("edit-id").value = "";
+function renderHomePage() {
+    const events = getEvents();
 
-    document.getElementById("form-title").textContent =
-        "Add Event";
+    const upcomingEvents =
+        document.getElementById("upcoming-events");
 
-    document.getElementById("save-event").textContent =
-        "Add Event";
+    const featuredName =
+        document.getElementById("featured-name");
 
-    document.getElementById("cancel-edit").hidden = true;
+    const featuredMeta =
+        document.getElementById("featured-meta");
+
+    const featuredDescription =
+        document.getElementById("featured-description");
+
+    if (!upcomingEvents) return;
+
+    upcomingEvents.innerHTML =
+        events.map(eventCard).join("");
+
+    if (events.length > 0) {
+        const featured = events[0];
+
+        featuredName.textContent = featured.name;
+
+        featuredMeta.textContent =
+            `${formatDate(featured.date, featured.time)} • ${featured.venue}`;
+
+        featuredDescription.textContent =
+            featured.description;
+    }
 }
 
-document
-    .getElementById("cancel-edit")
-    .addEventListener("click", resetForm);
 
-document
-    .getElementById("clear-data")
-    .addEventListener("click", () => {
-
-        if (!confirm(
-            "Reset all demo events and registrations?"
-        )) return;
-
-        localStorage.removeItem("clubEvents");
-        localStorage.removeItem("clubRegistrations");
-
-        renderAdminEvents();
-        renderRegistrations();
-    });
-
-adminSearch.addEventListener(
-    "input",
-    renderAdminEvents
-);
-
-registrationSearch.addEventListener(
-    "input",
-    renderRegistrations
-);
-
-renderAdminEvents();
-renderRegistrations();
+renderHomePage();
