@@ -1,1 +1,322 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Admin Dashboard | CodeChef ABES</title><link rel="stylesheet" href="css/style.css"></head><body><nav class="navbar"><a class="logo" href="index.html">CodeChef <span>ABES</span></a><div class="nav-links"><a href="index.html">Home</a><a href="events.html">Events</a><a class="active" href="admin.html">Admin</a></div></nav><main class="page"><section class="page-header admin-title"><div><p class="eyebrow">Admin Panel</p><h1>Event Dashboard</h1><p>Manage events and view student registrations.</p></div><button id="clear-data" class="btn danger-outline">Reset Demo Data</button></section><section class="stats"><div class="stat"><strong id="event-count">0</strong><span>Events</span></div><div class="stat"><strong id="registration-count">0</strong><span>Registrations</span></div></section><section class="admin-layout"><div class="form-card"><h2 id="form-title">Add Event</h2><form id="event-form"><input type="hidden" id="edit-id"><label>Event Name<input id="event-name" required placeholder="e.g. CP Challenge"></label><label>Date<input id="event-date" type="date" required></label><label>Time<input id="event-time" type="time" required></label><label>Venue<input id="event-venue" required placeholder="e.g. Lab 3"></label><label>Category<select id="event-category" required><option value="Competitive Programming">Competitive Programming</option><option value="Web Development">Web Development</option><option value="Hackathon">Hackathon</option><option value="Workshop">Workshop</option></select></label><label>Description<textarea id="event-description" rows="4" required placeholder="Short event description"></textarea></label><div class="button-row"><button class="btn primary" type="submit" id="save-event">Add Event</button><button class="btn secondary" type="button" id="cancel-edit" hidden>Cancel</button></div></form></div><div><div class="section-heading compact"><h2>Manage Events</h2><input id="admin-event-search" class="small-search" placeholder="Search..."></div><div id="admin-events" class="admin-list"></div></div></section><section class="registrations"><div class="section-heading compact"><h2>Registered Students</h2><input id="registration-search" class="small-search" placeholder="Search registrations..."></div><div class="table-wrap"><table><thead><tr><th>Name</th><th>Email</th><th>College / Year</th><th>Phone</th><th>Event</th></tr></thead><tbody id="registration-table"></tbody></table></div></section></main><footer>© 2026 CodeChef ABES Chapter</footer><script src="js/app.js"></script><script src="js/admin.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Dashboard | CodeChef ABES</title>
+
+    <link rel="stylesheet"
+          href="css/style.css">
+</head>
+
+<body>
+
+    <nav class="navbar">
+
+        <a class="logo" href="index.html">
+            CodeChef <span>ABES</span>
+        </a>
+
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="events.html">Events</a>
+            <a class="active" href="admin.html">Admin</a>
+        </div>
+
+    </nav>
+
+
+    <main class="page">
+
+        <!-- Page Header -->
+
+        <section class="page-header admin-title">
+
+            <div>
+
+                <p class="eyebrow">
+                    Admin Panel
+                </p>
+
+                <h1>
+                    Event Dashboard
+                </h1>
+
+                <p>
+                    Manage events and view student registrations.
+                </p>
+
+            </div>
+
+            <button
+                id="clear-data"
+                class="btn danger-outline">
+
+                Reset Demo Data
+
+            </button>
+
+        </section>
+
+
+        <!-- Statistics -->
+
+        <section class="stats">
+
+            <div class="stat">
+
+                <strong id="event-count">
+                    0
+                </strong>
+
+                <span>
+                    Events
+                </span>
+
+            </div>
+
+
+            <div class="stat">
+
+                <strong id="registration-count">
+                    0
+                </strong>
+
+                <span>
+                    Registrations
+                </span>
+
+            </div>
+
+        </section>
+
+
+        <!-- Admin Layout -->
+
+        <section class="admin-layout">
+
+
+            <!-- Add / Edit Event -->
+
+            <div class="form-card">
+
+                <h2 id="form-title">
+                    Add Event
+                </h2>
+
+
+                <form id="event-form">
+
+                    <input
+                        type="hidden"
+                        id="edit-id">
+
+
+                    <label>
+                        Event Name
+
+                        <input
+                            id="event-name"
+                            required
+                            placeholder="e.g. CP Challenge">
+                    </label>
+
+
+                    <label>
+                        Date
+
+                        <input
+                            id="event-date"
+                            type="date"
+                            required>
+                    </label>
+
+
+                    <label>
+                        Time
+
+                        <input
+                            id="event-time"
+                            type="time"
+                            required>
+                    </label>
+
+
+                    <label>
+                        Venue
+
+                        <input
+                            id="event-venue"
+                            required
+                            placeholder="e.g. Lab 3">
+                    </label>
+
+
+                    <label>
+                        Category
+
+                        <select
+                            id="event-category"
+                            required>
+
+                            <option value="Competitive Programming">
+                                Competitive Programming
+                            </option>
+
+                            <option value="Web Development">
+                                Web Development
+                            </option>
+
+                            <option value="Hackathon">
+                                Hackathon
+                            </option>
+
+                            <option value="Workshop">
+                                Workshop
+                            </option>
+
+                        </select>
+
+                    </label>
+
+
+                    <label>
+                        Description
+
+                        <textarea
+                            id="event-description"
+                            rows="4"
+                            required
+                            placeholder="Short event description">
+                        </textarea>
+
+                    </label>
+
+
+                    <div class="button-row">
+
+                        <button
+                            class="btn primary"
+                            type="submit"
+                            id="save-event">
+
+                            Add Event
+
+                        </button>
+
+
+                        <button
+                            class="btn secondary"
+                            type="button"
+                            id="cancel-edit"
+                            hidden>
+
+                            Cancel
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+
+            <!-- Manage Events -->
+
+            <div>
+
+                <div class="section-heading compact">
+
+                    <h2>
+                        Manage Events
+                    </h2>
+
+                    <input
+                        id="admin-event-search"
+                        class="small-search"
+                        placeholder="Search...">
+
+                </div>
+
+
+                <div
+                    id="admin-events"
+                    class="admin-list">
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Registered Students -->
+
+        <section class="registrations">
+
+            <div class="section-heading compact">
+
+                <h2>
+                    Registered Students
+                </h2>
+
+                <input
+                    id="registration-search"
+                    class="small-search"
+                    placeholder="Search registrations...">
+
+            </div>
+
+
+            <div class="table-wrap">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Name</th>
+
+                            <th>Email</th>
+
+                            <th>College / Year</th>
+
+                            <th>Phone</th>
+
+                            <th>Event</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="registration-table">
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <footer>
+        © 2026 CodeChef ABES Chapter
+    </footer>
+
+
+    <!-- JavaScript -->
+
+    <script src="js/app.js"></script>
+    <script src="js/admin.js"></script>
+
+</body>
+
+</html>
